@@ -1,0 +1,157 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.ericsson</groupId>
+	<artifactId>test-maven</artifactId>
+	<version>0.1</version>
+	<packaging>jar</packaging>
+
+	<name>test-maven</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<name>zhangsan</name>
+		<project.build.timestamp>yyyyMMdd-HHmm</project.build.timestamp>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<!-- 本地开发环境 -->
+			<id>dev</id>
+			<properties>
+				<profiles.active>dev</profiles.active>
+				<jdbc.username>it</jdbc.username>
+			</properties>
+			<activation>
+				<!-- 设置默认激活这个配置 -->
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<!-- 发布环境 -->
+			<id>release</id>
+			<properties>
+				<profiles.active>release</profiles.active>
+				<jdbc.username>root</jdbc.username>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 测试环境 -->
+			<id>beta</id>
+			<properties>
+				<profiles.active>beta</profiles.active>
+				<jdbc.username>admin</jdbc.username>
+			</properties>
+		</profile>
+	</profiles>
+
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+			</resource>
+		</resources>
+	
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<appendAssemblyId>false</appendAssemblyId>
+					<filters>
+						<filter>src/main/filter/filter.properties</filter>
+					</filters>
+					<descriptors>
+						<descriptor>src/assembly/default.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.ericsson</groupId>
+				<artifactId>test-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<id>show-var</id>
+						<phase>install</phase>
+						<goals>
+							<goal>printVar</goal>
+						</goals>
+						<configuration>
+							<paramVars>
+								<!-- 工程基本信息 -->
+								<paramVar>${project.groupId}</paramVar>
+								<paramVar>${project.artifactId}</paramVar>
+								<paramVar>${project.version}</paramVar>
+								<paramVar>${project.name}</paramVar>
+								<!-- 工程目录 -->
+								<paramVar>${project.basedir}</paramVar>
+								
+								<!-- build输出目录[${project.basedir}\target] -->
+								<paramVar>${project.build.directory}</paramVar>
+								<!-- build输出目录[${project.basedir}\target\classes] -->
+								<paramVar>${project.build.outputDirectory}</paramVar>
+								<!-- 目录[${project.basedir}\src\main\java -->
+								<paramVar>${project.build.sourceDirectory}</paramVar>
+								
+								<!-- ${project.name} + ${project.version} -->
+								<paramVar>${project.build.finalName}</paramVar>
+								
+								
+								<!-- pom自定义属性 -->
+								<paramVar>${project.build.timestamp}</paramVar>
+								
+								<paramVar>${profiles.active}</paramVar>
+								
+								<paramVar>${settings.localRepository}</paramVar>
+								
+								<paramVar>${env.LANG}</paramVar>
+								<paramVar>${env.JAVA_HOME}</paramVar>
+								
+								<paramVar>${haha}</paramVar>
+								<paramVar>${sun.desktop}</paramVar>
+								<paramVar>${env.NUMBER_OF_PROCESSORS}</paramVar>
+							</paramVars>
+						</configuration>
+					</execution>
+					<execution>
+						<id>do-file</id>
+						<phase>install</phase>
+						<goals>
+							<goal>createfile</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+							<fileName>test.txt</fileName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

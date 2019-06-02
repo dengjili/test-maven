@@ -1,0 +1,17 @@
+o*/.settings/
+**/.target/
+*.project
+**/osspath
+*.jar
+*.wararget/
+*.classpath
+*.jar
+*.war
+/target/
+*.logr
+*.wararget/
+*.classpath
+*.jar
+*.war
+/target/
+*.log

@@ -1,0 +1,3 @@
+README.txt
+
+ent=${bin}
